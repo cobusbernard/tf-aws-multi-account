@@ -90,7 +90,7 @@ do
     fi
 
     if [ ! -f _$env/terraform.tfstate ]; then
-      echo "Setting up Terraform remote state for $env in S3://$TERRAFORM_REMOTE_BUCKET/$SYSTEM/$env/terraform.tfstate"
+      echo "Setting up Terraform remote state for $env in S3://$TERRAFORM_REMOTE_BUCKET/$env/$SYSTEM/terraform.tfstate"
       terraform remote config \
         -backend=s3 \
         -backend-config="profile=$PROFILE_PREFIX-$env" \
@@ -100,5 +100,12 @@ do
 
       mv .terraform/terraform.tfstate _$env/terraform.tfstate
       touch _$env/environment.tfvars
+    fi
+
+    echo "Creating common environment variable file for $env"
+    if [ ! -f env.$env.tfvars ]; then
+      echo "aws_profile = \"$PROFILE_PREFIX\"" >> ../env.$env.tfvars
+      echo "aws_account_id = \"aws_account_id\"" >> ../env.$env.tfvars
+      echo "aws_region = \"aws_region\"" >> ../env.$env.tfvars
     fi
 done
