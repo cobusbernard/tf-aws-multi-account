@@ -12,15 +12,12 @@ if [ ! -f _$ENVIRONMENT/proposed.plan ]; then
 fi
 
 if [ -z $ENVIRONMENT ]; then
-  echo "No environment set. Please use 'development', 'staging', 'testing' or 'production'"
+  echo "No environment set. Please use 'master'"
   exit 1
 fi
 
-if [ "$ENVIRONMENT" != development ] \
-   && [ "$ENVIRONMENT" != testing ] \
-   && [ "$ENVIRONMENT" != staging ] \
-   && [ "$ENVIRONMENT" != production ]; then
-     echo "Incorrect value for environment. Please use 'development', 'staging', 'testing' or 'production'"
+if [ "$ENVIRONMENT" != master ] ; then
+     echo "Incorrect value for environment. Please use 'master'."
      exit 1
 fi
 
@@ -33,5 +30,3 @@ terraform apply \
   _$ENVIRONMENT/proposed.plan
 
 rm _$ENVIRONMENT/proposed.plan
-rm -rf .terraform/terraform.tfstate
-rm -rf .terraform/terraform.tfstate.backup

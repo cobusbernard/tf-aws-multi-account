@@ -1,13 +1,15 @@
 #!/bin/bash
 set -e
 
+environment=$1
+
 ENVIRONMENT=$1
 
 DIR_ABS="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SYSTEM=$(basename $DIR_ABS)
 
 if [ -z $ENVIRONMENT ]; then
-  echo "No ENVIRONMENT set. Please use 'development', 'staging', 'testing' or 'production'"
+  echo "No environment set. Please use 'development', 'stagaing', 'testing' or 'production'"
   exit 1
 fi
 
@@ -15,17 +17,11 @@ if [ "$ENVIRONMENT" != development ] \
    && [ "$ENVIRONMENT" != testing ] \
    && [ "$ENVIRONMENT" != staging ] \
    && [ "$ENVIRONMENT" != production ]; then
-     echo "Incorrect value for environment. Please use 'development', 'staging', 'testing' or 'production'"
+     echo "Incorrect value for environment. Please use 'development', 'stagaing', 'testing' or 'production'"
      exit 1
 fi
 
-if ! [ -L "common.tf" ]; then
-  echo "Missing common.tf symlink, creating..."
-  ln -s ../common.tf common.tf
-  echo "Symlink to common.tf created."
-fi
-
-echo "Preparing the plan:"
+echo "Preparing to apply:"
 echo "==================="
 echo "System: ${SYSTEM}"
 echo "Environment: _$ENVIRONMENT"
@@ -34,11 +30,7 @@ rm -rf .terraform/terraform.tfstate
 mkdir -p .terraform
 cp _$ENVIRONMENT/terraform.tfstate ./.terraform/
 
-terraform fmt ../
-terraform get
-
-terraform plan \
-  -var "environment=$ENVIRONMENT" \
+terraform destroy \
+  -var "environment=$environment" \
   -var-file="../env.$ENVIRONMENT.tfvars" \
-  -var-file=_$ENVIRONMENT/environment.tfvars \
-  -out=_$ENVIRONMENT/proposed.plan
+  -var-file=_$environment/environment.tfvars

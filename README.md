@@ -7,6 +7,7 @@ Set the appropriate values in `config.env`. The bash scripts work with the follo
 * Your AWS profile in `~/.aws/credentials` is in the format `<prefix>-<environment>`, i.e. `my_company-master` or `my_company-development`.
 * The remote state is stored in a single bucket, with key `<system>/<environment>/` for each system / environment combination.
 * The profile for each environment is used for uploading the files, so other profiles can't read them. This means that `development` can't read `production`, but they can both read from `master`, but not write.
+* Copy the `*.exmple` to `*` and edit with your account values.
 
 ## Variables
 Please set the values for `config.env`, should look something like:
@@ -51,11 +52,9 @@ You will need to create a bucket in the master account to contain the remote sta
         ]
       },
       "Action": [
-        "s3:DeleteObject",
         "s3:GetObject",
         "s3:GetObjectAcl",
-        "s3:GetObjectVersion",
-        "s3:PutObject"
+        "s3:GetObjectVersion"
       ],
       "Resource": "arn:aws:s3:::my-terraform-state/master/*"
     },

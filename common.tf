@@ -23,7 +23,7 @@ variable "aws_accounts" {
     staging     = ""
     production  = ""
 
-    master     = ""
+    master = ""
 
     #3RD parties, i.e.
     datadog = "464622532012"
@@ -38,5 +38,5 @@ variable "environment" {
 variable "terraform_state_bucket" {
   type = "string"
 
-  default = "my_company-terraform-state"
+  default = "my-terraform-state"
 }

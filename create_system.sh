@@ -18,8 +18,11 @@ if [ "$SYSTEM_TYPE" != master ] \
    exit 1
 fi
 
+SYMLINK_PREFIX=""
+
 if [ "$SYSTEM_TYPE" == master ]; then
   ENVIRONMENTS=("master")
+  SYMLINK_PREFIX="master."
 fi
 
 if [ -z $TERRAFORM_REMOTE_BUCKET ]; then
@@ -53,7 +56,7 @@ if [ -z $SYSTEM ]; then
 fi
 
 if [ -z $SYSTEM_TYPE ]; then
-  echo "No system name specified, please give it a name of some kind, i.e. my-api, external-system, etc."
+  echo "No system type specified, please user 'master' or 'environment'. 'master' will create a single env in the system folder, 'environment' will create one per environment in the list"
   usage_msg
   exit 1
 fi
@@ -68,7 +71,7 @@ declare -a symlinks=("apply.sh" "plan.sh" "destroy.sh" "common.tf")
 for symlink in "${symlinks[@]}"
 do
   if ! [ -h "$symlink" ]; then
-    ln -s ../$symlink ./
+    ln -s ../$SYMLINK_PREFIX$symlink ./$symlink
   fi
 done
 
@@ -102,10 +105,10 @@ do
       touch _$env/environment.tfvars
     fi
 
-    echo "Creating common environment variable file for $env"
-    if [ ! -f env.$env.tfvars ]; then
-      echo "aws_profile = \"$PROFILE_PREFIX\"" >> ../env.$env.tfvars
-      echo "aws_account_id = \"aws_account_id\"" >> ../env.$env.tfvars
-      echo "aws_region = \"aws_region\"" >> ../env.$env.tfvars
-    fi
+#    echo "Creating common environment variable file for $env"
+#    if [ ! -f env.$env.tfvars ]; then
+#      echo "aws_profile = \"$PROFILE_PREFIX\"" >> ../env.$env.tfvars
+#      echo "aws_account_id = \"aws_account_id\"" >> ../env.$env.tfvars
+#      echo "aws_region = \"$\"" >> ../env.$env.tfvars
+#    fi
 done
